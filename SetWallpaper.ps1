@@ -1,7 +1,7 @@
 # Define the wallpaper path
 $wallpaperPath = "C:\Wallpapers\MyWallpaper.jpg"
 
-# Set the wallpaper
+# Function to set the wallpaper
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
@@ -16,4 +16,12 @@ public class Wallpaper {
     }
 }
 "@
-[Wallpaper]::Set($wallpaperPath)
+function Set-Wallpaper {
+    [Wallpaper]::Set($wallpaperPath)
+}
+
+# Infinite loop to enforce wallpaper every second
+while ($true) {
+    Set-Wallpaper
+    Start-Sleep -Seconds 1
+}
