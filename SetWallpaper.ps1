@@ -1,27 +1,18 @@
-# Define the wallpaper path
-$wallpaperPath = "C:\Wallpapers\MyWallpaper.jpg"
+# Get the list of devices from `arp -a`
+$arpTable = arp -a
 
-# Function to set the wallpaper
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
-public class Wallpaper {
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-    public const int SPI_SETDESKWALLPAPER = 20;
-    public const int SPIF_UPDATEINIFILE = 0x01;
-    public const int SPIF_SENDCHANGE = 0x02;
-    public static void Set(string path) {
-        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+# Extract IP addresses from the ARP table
+$ips = ($arpTable | ForEach-Object { $_ -match "(\d{1,3}\.){3}\d{1,3}" } | ForEach-Object { $Matches[0] })
+
+# Define the message
+$message = "Hello World!"
+
+# Loop through each IP and send the message
+foreach ($ip in $ips) {
+    try {
+        # Use msg command to send the message
+        msg * /server:$ip $message
+    } catch {
+        Write-Host "Failed to send message to $ip"
     }
-}
-"@
-function Set-Wallpaper {
-    [Wallpaper]::Set($wallpaperPath)
-}
-
-# Infinite loop to enforce wallpaper every second
-while ($true) {
-    Set-Wallpaper
-    Start-Sleep -Seconds 1
 }
