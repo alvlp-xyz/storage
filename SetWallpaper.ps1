@@ -1,15 +1,8 @@
 # Define the wallpaper path
 $wallpaperPath = "C:\Wallpapers\MyWallpaper.jpg"
 
-# Check if the wallpaper file exists
-if (-Not (Test-Path $wallpaperPath)) {
-    Write-Host "Wallpaper file not found at path: $wallpaperPath"
-    exit
-}
-
 # Set the wallpaper
-try {
-    Add-Type -TypeDefinition @"
+Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 public class Wallpaper {
@@ -23,8 +16,4 @@ public class Wallpaper {
     }
 }
 "@
-    [Wallpaper]::Set($wallpaperPath)
-    Write-Host "Wallpaper set successfully!"
-} catch {
-    Write-Host "Failed to set wallpaper: $_"
-}
+[Wallpaper]::Set($wallpaperPath)
